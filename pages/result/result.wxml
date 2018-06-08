@@ -1,0 +1,17 @@
+<view class="page__hd">
+  <view class="page__title">结果页</view>
+  <view class="page__desc">一些描述</view>
+</view>
+
+<!--表格呈现-->
+  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
+    <view class="weui-cell__bd" style="background-color:lightblue">花费项</view>  
+    <view class="weui-cell__bd" style="background-color:lightblue">金额</view> 
+    <view class="weui-cell__bd" style="background-color:lightblue">备注</view>   
+  </view> 
+
+  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
+    <view class="weui-cell__bd">第一项</view>  
+    <view class="weui-cell__bd">钱</view> 
+    <view class="weui-cell__bd">没有</view>   
+  </view>   
