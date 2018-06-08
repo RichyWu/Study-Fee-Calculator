@@ -42,6 +42,9 @@ Page({
     dateValue: [9999, 13, 32],
     hideEndCal: true,
 
+    //结束日期比开始日期早的warning
+    warning:false,
+
     //判断读几年级
     age: 0,   //以计划入读那年4月30日为基准的年龄  
     termOfStartLearn: 0, //入读时候是term几
@@ -136,6 +139,13 @@ Page({
       hideEndCal: false
     })
   },
+
+  confirmWarning(){
+    var that = this;
+    that.setData({
+      warning:false
+    })
+  },
   
   /*“看看吧” 按钮的处理，完成：
   1. 是否有日期未选择
@@ -209,7 +219,9 @@ Page({
         confirmText:"继续",
         success: function (res) {
           if (res.confirm) {
-            console.log('用户点击确定')//前往结果页
+            wx.navigateTo({
+              url: '../result/result',
+            })//前往结果页
           }
           if(res.cancel){
             console.log('用户点击取消')//留在当前页
@@ -326,11 +338,16 @@ Page({
     var val = e.currentTarget.dataset.value;
     var idx = parseInt(val) - 1;
     var selectTerm = that.checkTermNum(that.data.yearThisMth, that.data.thisMonth, val);
+    var d = new Date();
 
-    if ((parseInt(that.data.yearThisMth) > (new Date().getFullYear())) || (selectTerm > that.data.termNow)) {
+    if ((parseInt(that.data.yearThisMth) > (d.getFullYear())) || (selectTerm > that.data.termNow)) {
       if(that.data.dayListThisMth[idx].bgColor != 'gray') {
+        d.setFullYear(that.data.yearThisMth);
+        d.setMonth(that.data.thisMonth - 1);
+        d.setDate(val);
+
         that.setData({
-          learnStartDate: that.data.yearThisMth + "-" + that.data.thisMonth + "-" + val,
+          learnStartDate: util.formatDate(d, '-'),
           hideStartCal:true,
           termOfStartLearn: selectTerm,
           dayOfStartThisMth: val,
@@ -359,6 +376,15 @@ Page({
   chooseEndDateThisMth(e) {
     var that = this;
     var val = e.currentTarget.dataset.value;
+
+    //如果日期比开始日期提前，显示warning
+    if (val <= that.data.dayOfStartThisMth){
+      that.setData({
+        warning:true,
+        hideEndCal:true,
+      })
+      return;
+    }
     that.chooseEndDate(val, '1st');//选的第一个日历上的日期
   },
 
@@ -387,12 +413,12 @@ Page({
     }
     else if(whichCalendar == '2nd'){
       year = that.data.yearNextOneMth;
-      month = that.data.nextOneMth;
+      month = that.data.nextOneMonth;
       dayList = that.data.dayListNextOneMth;
     }
     else if(whichCalendar == '3rd'){
       year = that.data.yearNextTwoMth;
-      month = that.data.nextTwoMth;
+      month = that.data.nextTwoMonth;
       dayList = that.data.dayListNextTwoMth;
     }
 
@@ -404,10 +430,6 @@ Page({
     d.setFullYear(year);
     d.setMonth(month-1);
     d.setDate(val);
-
-    var a = util.formatDate(d, '-');
-    console.log(d)
-    console.log(a)
 
     //所选时间不是假期
     if (dayList[idx].bgColor != 'gray') {

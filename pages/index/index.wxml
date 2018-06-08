@@ -39,6 +39,19 @@
     </view>
   </view>
 
+  <!--结束日期比开始日期超前的警告-->
+  <block wx:if="{{warning}}">
+    <view class="modal-mask" style='background:white'></view> 
+    <view class="icon-box">
+      <icon type="warn" size="93" color="#FFBE00"></icon>
+      <view class="icon-box__ctn">
+          <view class="icon-box__title" style='text-align:center; color:black'>注意</view>
+          <view class="icon-box__desc" style='color:black'>结束时间不能在开始时间之前</view>
+          <button class="weui-btn" type="warn" bindtap="confirmWarning">确定</button>
+      </view>
+    </view>
+  </block>
+
   <!--结束日期日历窗，平时隐藏，由“结束学习日期”的点击激活-->
   <view class="modal-mask" bindtap="hideEndCal" catchtouchmove="preventTouchMove" hidden="{{hideEndCal}}"></view>  
   <view class = "calendar-frame">
