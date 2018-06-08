@@ -1,0 +1,14 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/result/result"
+  ],
+  "window":{
+    "backgroundTextStyle":"bold",
+    "backgroundColor":"#f8f8f8",
+    "navigationBarBackgroundColor": "#f8f8f8",
+    "navigationBarTitleText": "微留学花费计算器",
+    "navigationBarTextStyle":"black"
+   }
+}

@@ -1,0 +1,156 @@
+<!--index.wxml-->
+<view class="page">
+  <!--分割线-->
+  <view class="div-line"></view>
+  
+  <!--Title及描述 -->
+  <view class="page__hd">
+    <view class="page__title">墨尔本微留学花费计算</view>
+    <view class="page__desc">根据孩子的生日以及计划入读日期，提示孩子将入读的年级。同时根据计划学习的时长，提供微留学报名及入读的花费。选择日期时，日历会标注学期假期时间，方便您制定计划。</view>
+  </view>
+
+  <!--开始日期日历窗，平时隐藏，由“计划入读日期”的点击激活-->
+  <view class="modal-mask" bindtap="hideStartCal" catchtouchmove="preventTouchMove" hidden="{{hideStartCal}}"></view>  
+  <view class = "calendar-frame">
+    <view class="modal-start-dialog" hidden="{{hideStartCal}}">  
+      <view class='modalBox'>  
+        <view class='box'>  
+          <view class='calendarBox'>  
+            <view class='calendarTitle'>  
+              <picker mode="date"  value="{{yearThisMth}}" start="{{today}}" end="2020-12-31" bindchange="bindLearnStartDateChange">
+                <view style="font-size: 46rpx; padding: 0 20rpx;color:blue;text-decoration:underline">
+                  {{yearNextOneMth}} 年 {{thisMonth}} 月
+                </view>
+              </picker>
+            </view>
+
+            <block wx:for="{{week}}" wx:key="item">  
+              <view class="week">{{week[index]}}</view>  
+            </block>  
+            <block wx:for="{{firstDayIdxThisMth}}" wx:key="item">  
+              <view class="week" style="border-bottom:0;color:transparent">0</view>  
+            </block>  
+            <block wx:for="{{dayListThisMth}}" wx:key="item">  
+              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseStartDate" data-index="{{index}}" data-value="{{item.day}}">{{item.day}}</view>  
+            </block>  
+          </view>  
+        </view>  
+      </view> 
+    </view>
+  </view>
+
+  <!--结束日期日历窗，平时隐藏，由“结束学习日期”的点击激活-->
+  <view class="modal-mask" bindtap="hideEndCal" catchtouchmove="preventTouchMove" hidden="{{hideEndCal}}"></view>  
+  <view class = "calendar-frame">
+    <!--第一个日历-->  
+    <view class="modal-dialog" hidden="{{hideEndCal}}">  
+      <view class='modalBox'>  
+        <view class='box'>  
+          <view class='calendarBox'>  
+            <view class='calendarTitle'>  
+              <text style='font-size:46rpx;'>{{yearThisMth}}</text> 年  
+              <text style='font-size:46rpx;'>{{thisMonth}}</text> 月  
+            </view>  
+
+            <block wx:for="{{week}}" wx:key="item">  
+              <view class="week">{{week[index]}}</view>  
+            </block>  
+            <block wx:for="{{firstDayIdxThisMth}}" wx:key="item">  
+              <view class="week" style="border-bottom:0;color:transparent">0</view>  
+            </block>  
+            <block wx:for="{{dayListThisMth}}" wx:key="item">  
+              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseEndDateThisMth" data-value="{{item.day}}">{{item.day}}</view>  
+            </block>  
+          </view>  
+        </view>  
+      </view> 
+    </view> 
+
+    <!--第二个日历-->
+    <view class="modal-dialog" hidden="{{hideEndCal}}">  
+      <view class='modalBox'>  
+        <view class='box'>  
+          <view class='calendarBox'>  
+            <view class='calendarTitle'>  
+              <text style='font-size:46rpx;'>{{yearNextOneMth}}</text> 年  
+              <text style='font-size:46rpx;'>{{nextOneMonth}}</text> 月  
+            </view>  
+
+            <block wx:for="{{week}}" wx:key="item">  
+              <view class="week">{{week[index]}}</view>  
+            </block>  
+            <block wx:for="{{firstDayIdxNextOneMth}}" wx:key="item">  
+              <view class="week" style="border-bottom:0;color:transparent">0</view>  
+            </block>  
+            <block wx:for="{{dayListNextOneMth}}" wx:key="item">  
+              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseEndDateNextMth" data-value="{{item.day}}">{{item.day}}</view>  
+            </block>  
+          </view>  
+        </view>  
+      </view> 
+    </view> 
+
+    <!--第三个日历-->
+    <view class="modal-dialog" hidden="{{hideEndCal}}">  
+      <view class='modalBox'>  
+        <view class='box'>  
+          <view class='calendarBox'>  
+            <view class='calendarTitle'>  
+              <text style='font-size:46rpx;'>{{yearNextTwoMth}}</text> 年  
+              <text style='font-size:46rpx;'>{{nextTwoMonth}}</text> 月  
+            </view>  
+
+            <block wx:for="{{week}}" wx:key="item">  
+              <view class="week">{{week[index]}}</view>  
+            </block>  
+            <block wx:for="{{firstDayIdxNextTwoMth}}" wx:key="item">  
+              <view class="week" style="border-bottom:0;color:transparent">0</view>  
+            </block>  
+            <block wx:for="{{dayListNextTwoMth}}" wx:key="item">  
+              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseEndDateNextTwoMth" data-value="{{item.day}}">{{item.day}}</view>  
+            </block>  
+          </view>  
+        </view>  
+      </view> 
+    </view>   
+  </view>
+
+<!--生日选择框-->
+  <view class="weui-cells weui-cells_after-title" style='margin-top:40rpx;'>  
+    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">  
+      <view class="weui-cell__bd">孩子生日</view>
+        <picker mode="date" value="{{birthDate}}" start="2000-01-01" end="2020-12-31" bindchange="bindBirthDateChange">
+            <view class="weui-cell__ft weui-cell__ft_in-access">
+              {{birthDate}}
+            </view>    
+        </picker>
+    </view>  
+  </view>  
+
+<!--开始日期选择框-->
+  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
+    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" catchtap='showStartCal'>  
+      <view class="weui-cell__bd">计划入读日期</view>
+      <view class="weui-cell__ft weui-cell__ft_in-access">{{learnStartDate}}</view>    
+    </view>  
+  </view>
+
+<!--结束日期选择框-->
+  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
+    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" catchtap='showEndCal'>  
+      <view class="weui-cell__bd">结束学习日期</view>  
+      <view class="weui-cell__ft weui-cell__ft_in-access">{{learnEndDate}}</view>  
+    </view>  
+  </view>   
+
+
+<!--按钮-->
+  <view class="weui-btn">
+    <button type="primary" bindtap="bindCalcBtn" style="margin:80rpx auto;"> 看看吧 </button>
+  </view>
+
+</view>
+
+<view class="page__ft">
+  <image mode="aspectFit" src="../../images/Ausun Global_字在右.png" style="width: 84px; height: 19px;"></image>
+</view>
