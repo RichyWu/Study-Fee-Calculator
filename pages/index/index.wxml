@@ -17,9 +17,9 @@
         <view class='box'>  
           <view class='calendarBox'>  
             <view class='calendarTitle'>  
-              <picker mode="date"  value="{{yearThisMth}}" start="{{today}}" end="2020-12-31" bindchange="bindLearnStartDateChange">
+              <picker mode="date"  value="{{yearThisMth}}" start="{{initDate}}" end="2020-12-31" bindchange="bindLearnStartDateChange">
                 <view style="font-size: 46rpx; padding: 0 20rpx;color:blue;text-decoration:underline">
-                  {{yearNextOneMth}} 年 {{thisMonth}} 月
+                  {{yearThisMth}} 年 {{thisMonth}} 月
                 </view>
               </picker>
             </view>
