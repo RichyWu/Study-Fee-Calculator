@@ -1,11 +1,12 @@
 //index.js
 const app = getApp()
 var util = require("../../utils/util.js")
+const startYear = 2018
 const psYrLevel = ['学前班', '1年级', '2年级', '3年级', '4年级', '5年级', '6年级']
 const collegeYrLevel = ['7年级', '8年级', '9年级', '10年级', '11年级', '12年级']
-const termDate = [{ year: 2018, term1: { startMonth: 1, startDate: 29, endMonth: 3, endDate: 29 }, term2: { startMonth: 4, startDate: 16, endMonth: 6, endDate: 29 }, term3: { startMonth: 7, startDate: 16, endMonth: 9, endDate: 21 }, term4: { startMonth: 10, startDate: 8, endMonth: 12, endDate: 21 }},
-  { year: 2019, term1: { startMonth: 1, startDate: 29, endMonth: 4, endDate: 5 }, term2: { startMonth: 4, startDate: 23, endMonth: 6, endDate: 28 }, term3: { startMonth: 7, startDate: 15, endMonth: 9, endDate: 20 }, term4: { startMonth: 10, startDate: 7, endMonth: 12, endDate: 20 }},
-  { year: 2020, term1: { startMonth: 1, startDate: 28, endMonth: 3, endDate: 27 }, term2: { startMonth: 4, startDate: 14, endMonth: 6, endDate: 26 }, term3: { startMonth: 7, startDate: 13, endMonth: 9, endDate: 18 }, term4: { startMonth: 10, startDate: 5, endMonth: 12, endDate: 18 } }
+const termDate = [{ year: 2018, term:[{ startMonth: 1, startDate: 29, endMonth: 3, endDate: 29 }, { startMonth: 4, startDate: 16, endMonth: 6, endDate: 29 }, { startMonth: 7, startDate: 16, endMonth: 9, endDate: 21 }, { startMonth: 10, startDate: 8, endMonth: 12, endDate: 21 }] },
+{ year: 2019, term: [{ startMonth: 1, startDate: 29, endMonth: 4, endDate: 5 }, { startMonth: 4, startDate: 23, endMonth: 6, endDate: 28 }, { startMonth: 7, startDate: 15, endMonth: 9, endDate: 20 }, { startMonth: 10, startDate: 7, endMonth: 12, endDate: 20 }] },
+{ year: 2020, term: [{ startMonth: 1, startDate: 28, endMonth: 3, endDate: 27 }, { startMonth: 4, startDate: 14, endMonth: 6, endDate: 26 }, { startMonth: 7, startDate: 13, endMonth: 9, endDate: 18 }, { startMonth: 10, startDate: 5, endMonth: 12, endDate: 18 }] }
 ]
 
 Page({
@@ -23,7 +24,7 @@ Page({
     firstDayIdxNextTwoMth: 0,
     thisMonth: 0,
     yearThisMth: 0,
-    today: '',
+    initDate: '',
     termNow: 0,
 
     //data for 计划入读日期 日历
@@ -46,20 +47,40 @@ Page({
     termOfStartLearn: 0, //入读时候是term几
   },
 
-  //页面载入时计算当日日期,渲染日历
+  //页面载入时计算当日日期,
+  //渲染日历 - 以当天所在的term，跳到下一个term的开始月份进行渲染
   onLoad: function () {
     var that = this;
 
-    //初始化当天日期
+    //当天日期
     var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+
+    var termNum = that.checkTermNum(year, month, day);
+    var nextTerm = termNum + 1; //下一个term
+
+    if (termNum == 0) {
+      year++;
+      nextTerm = 2;
+      termNum++;
+    }
+    else if (nextTerm > 4) {
+      year++;
+      nextTerm = 1;
+    }
+
+    month = termDate[year-startYear].term[nextTerm-1].startMonth;
+    day = termDate[year - startYear].term[nextTerm - 1].startDate;
+    that.renderCalendar(year, month); //渲染的是下个term日历，不需要高亮
+
     that.setData({
-      today: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-    })
-    var termNum = that.checkTermNum(date.getFullYear(), (date.getMonth() + 1), date.getDate());
-    that.setData({
+      initDate: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
       termNow:termNum
     })
-    that.renderCalendar(date.getFullYear(), (date.getMonth() + 1), date.getDate()); //使用方法： 在此函数内传入年、月、日
+
+    
   },
 
   /*事件处理函数*/
@@ -247,17 +268,17 @@ Page({
     //var dayElement = {day:0, bgColor:'white',color:'black'};
 
     //本月总共多少天，从1号开始放入数组
-    //同时判断当日是否为学期假期，若是，则在数组中加入对应的background color（#f1f1f1)
+    //同时判断当日是否为学期假期，若是，则在数组中加入对应的background color（gray)
     for (var i = 1; i <= that.getDayNum(year, month); i++) {
-      let backgroundColor = ((that.isHoliday(year, month, i))?'#f1f1f1':'white');
+      let backgroundColor = ((that.isHoliday(year, month, i))?'gray':'white');
       arrThisMth.push({day:i, bgColor:backgroundColor, color:'black'});
     }
     for (var i = 1; i <= that.getDayNum(yearNextMth, monthNextMth); i++) {
-      let backgroundColor = ((that.isHoliday(yearNextMth, monthNextMth, i)) ? '#f1f1f1' : 'white');
+      let backgroundColor = ((that.isHoliday(yearNextMth, monthNextMth, i)) ? 'gray' : 'white');
       arrNextOneMth.push({ day: i, bgColor: backgroundColor, color: 'black' });
     }
     for (var i = 1; i <= that.getDayNum(yearNextTwoMth, monthNextTwoMth); i++) {
-      let backgroundColor = ((that.isHoliday(yearNextTwoMth, monthNextTwoMth, i)) ? '#f1f1f1' : 'white');
+      let backgroundColor = ((that.isHoliday(yearNextTwoMth, monthNextTwoMth, i)) ? 'gray' : 'white');
       arrNextTwoMth.push({ day: i, bgColor: backgroundColor, color: 'black' });
     }
    
@@ -296,7 +317,7 @@ Page({
 
   /*在入读日历上选择的操作
     当在日历上选择时，dayListThisMth已经更新了，点选的日期可以在list里找到（index = date - 1)
-    找到对应的日期后，bgColor不为#f1f1f1的才可以操作 - 即非假期
+    找到对应的日期后，bgColor不为gray的才可以操作 - 即非假期
     并且选择的term必须大于当前时间所处term（onLoad时计算） - 因为申请必须至少提前一个term
     点选完毕后，除了设置learnStartDate，还需要隐藏日历
   */
@@ -307,7 +328,7 @@ Page({
     var selectTerm = that.checkTermNum(that.data.yearThisMth, that.data.thisMonth, val);
 
     if ((parseInt(that.data.yearThisMth) > (new Date().getFullYear())) || (selectTerm > that.data.termNow)) {
-      if(that.data.dayListThisMth[idx].bgColor != '#f1f1f1') {
+      if(that.data.dayListThisMth[idx].bgColor != 'gray') {
         that.setData({
           learnStartDate: that.data.yearThisMth + "-" + that.data.thisMonth + "-" + val,
           hideStartCal:true,
@@ -331,87 +352,65 @@ Page({
   /*在结束日历上选择的操作
     结束日历显示3个月的，第一个日历（thisMth）根据入读日期而来
     在第一个日历上点选时，不能比入读日期（高亮的）提前
-    同样，不能选择假期（背景色为#f1f1f1的）
+    同样，不能选择假期（背景色为gray的）
     其余两个日历，只是不能选择假期
     选择完毕后，需要判断所处的Term是否和termOfStartLearn一致
   */
   chooseEndDateThisMth(e) {
     var that = this;
     var val = e.currentTarget.dataset.value;
-    var idx = parseInt(val) - 1;
-    var selectTerm = that.checkTermNum(that.data.yearThisMth, that.data.thisMonth, val);
-    var sameTerm = (selectTerm == that.data.termOfStartLearn);
-
-    //点取结束时间在开始时间之后
-    if (parseInt(val) > that.data.dayOfStartThisMth) {
-      //所选时间不是假期
-      if (that.data.dayListThisMth[idx].bgColor != '#f1f1f1') {
-        //若跨term了
-        if(!sameTerm) {
-          wx.showModal({
-            title: '注意',
-            content: '您所选的日期涵盖了2个Term，中间有学校假期，您确定？',
-            confirmText:'执意如此',
-            cancelText:'重选日期',
-            success: function (res) {
-              if (res.confirm) {
-                sameTerm = true;//强制继续
-              }
-            }
-          })
-        }
-        if (sameTerm) { //在同一个term，或是强制继续的
-          that.setData({
-            learnEndDate: that.data.yearThisMth + "-" + that.data.thisMonth + "-" + val,
-            hideEndCal: true,
-          })
-        }
-      }
-    }
+    that.chooseEndDate(val, '1st');//选的第一个日历上的日期
   },
 
   chooseEndDateNextMth(e) {
     var that = this;
     var val = e.currentTarget.dataset.value;
-    var idx = parseInt(val) - 1;
-    var selectTerm = that.checkTermNum(that.data.yearNextOneMth, that.data.nextOneMonth, val);
-    var sameTerm = (selectTerm == that.data.termOfStartLearn);
-
-    //所选时间不是假期
-    if (that.data.dayListNextOneMth[idx].bgColor != '#f1f1f1') {
-      //若跨term了
-      if (!sameTerm) {
-        wx.showModal({
-          title: '注意',
-          content: '您所选的日期涵盖了2个Term，中间有学校假期，您确定？',
-          confirmText: '执意如此',
-          cancelText: '重选日期',
-          success: function (res) {
-            if (res.confirm) {
-              sameTerm = true;//强制继续
-            }
-          }
-        })
-      }
-      if (sameTerm) { //在同一个term，或是强制继续的
-        that.setData({
-          learnEndDate: that.data.yearNextOneMth + "-" + that.data.nextOneMonth + "-" + val,
-          hideEndCal: true,
-        })
-      }
-    }
-    
+    that.chooseEndDate(val, '2nd'); //选的第二个日历上的日期 
   },
 
   chooseEndDateNextTwoMth(e) {
     var that = this;
     var val = e.currentTarget.dataset.value;
+    that.chooseEndDate(val, '3rd'); //选的第三个日历上的日期
+  },
+
+  chooseEndDate(selectDate, whichCalendar) {
+    var that = this;
+    var val = selectDate;
+    var year, month;
+    var dayList = [];
+
+    if(whichCalendar == '1st'){
+      year = that.data.yearThisMth;
+      month = that.data.thisMonth;
+      dayList = that.data.dayListThisMth;
+    }
+    else if(whichCalendar == '2nd'){
+      year = that.data.yearNextOneMth;
+      month = that.data.nextOneMth;
+      dayList = that.data.dayListNextOneMth;
+    }
+    else if(whichCalendar == '3rd'){
+      year = that.data.yearNextTwoMth;
+      month = that.data.nextTwoMth;
+      dayList = that.data.dayListNextTwoMth;
+    }
+
     var idx = parseInt(val) - 1;
-    var selectTerm = that.checkTermNum(that.data.yearNextTwoMth, that.data.nextTwoMonth, val);
+    var selectTerm = that.checkTermNum(year, month, val);
     var sameTerm = (selectTerm == that.data.termOfStartLearn);
 
+    var d = new Date();
+    d.setFullYear(year);
+    d.setMonth(month-1);
+    d.setDate(val);
+
+    var a = util.formatDate(d, '-');
+    console.log(d)
+    console.log(a)
+
     //所选时间不是假期
-    if (that.data.dayListNextTwoMth[idx].bgColor != '#f1f1f1') {
+    if (dayList[idx].bgColor != 'gray') {
       //若跨term了
       if (!sameTerm) {
         wx.showModal({
@@ -422,13 +421,17 @@ Page({
           success: function (res) {
             if (res.confirm) {
               sameTerm = true;//强制继续
+              that.setData({
+                learnEndDate: util.formatDate(d, '-'),
+                hideEndCal: true,
+              })
             }
           }
         })
       }
-      if (sameTerm) { //在同一个term，或是强制继续的
+      if (sameTerm) { //在同一个term
         that.setData({
-          learnEndDate: that.data.yearNextTwoMth + "-" + that.data.nextTwoMonth + "-" + val,
+          learnEndDate: util.formatDate(d,'-'),
           hideEndCal: true,
         })
       }
@@ -446,7 +449,7 @@ Page({
     var day = parseInt(selectDay);
     var yearIdx = 0;
     var isHoliday = true;
-    var term = 0;
+    var termIdx = 0;
 
     for (var i = 0; i < 3; i++) {//总共3年数据,找到对应年份的数据
       if (year == termDate[i].year) {
@@ -455,56 +458,23 @@ Page({
       }
     } 
 
-    term = that.checkTermNum(selectYear, selectMonth, selectDay);
-
-    switch (term) {
-      case 1:
-        if ((month > termDate[yearIdx].term1.startMonth) && (month < termDate[yearIdx].term1.endMonth)){
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term1.startMonth) && (day >= termDate[yearIdx].term1.startDate)) {
-            isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term1.endMonth) && (day <= termDate[yearIdx].term1.endDate)){
-            isHoliday = false;
-        } 
-        break;
-      case 2:
-        if ((month > termDate[yearIdx].term2.startMonth) && (month < termDate[yearIdx].term2.endMonth)) {
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term2.startMonth) && (day >= termDate[yearIdx].term2.startDate)) {
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term2.endMonth) && (day <= termDate[yearIdx].term2.endDate)) {
-          isHoliday = false;
-        } 
-        break;
-      case 3:
-        if ((month > termDate[yearIdx].term3.startMonth) && (month < termDate[yearIdx].term3.endMonth)) {
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term3.startMonth) && (day >= termDate[yearIdx].term3.startDate)) {
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term3.endMonth) && (day <= termDate[yearIdx].term3.endDate)) {
-          isHoliday = false;
-        } 
-        break;
-      case 4:
-        if ((month > termDate[yearIdx].term4.startMonth) && (month < termDate[yearIdx].term4.endMonth)) {
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term4.startMonth) && (day >= termDate[yearIdx].term4.startDate)) {
-          isHoliday = false;
-        }
-        else if ((month == termDate[yearIdx].term4.endMonth) && (day <= termDate[yearIdx].term4.endDate)) {
-          isHoliday = false;
-        } 
-        break;
-      default:
-        break;
+    var term = that.checkTermNum(selectYear, selectMonth, selectDay);
+    if (term == 0){//term 0是一年中term 4结束后的日子，一定为holiday
+      return true;
     }
+    else {
+      termIdx = term - 1;
+    }
+
+    if ((month > termDate[yearIdx].term[termIdx].startMonth) && (month < termDate[yearIdx].term[termIdx].endMonth)) {
+      isHoliday = false;
+    }
+    else if ((month == termDate[yearIdx].term[termIdx].startMonth) && (day >= termDate[yearIdx].term[termIdx].startDate)) {
+      isHoliday = false;
+    }
+    else if ((month == termDate[yearIdx].term[termIdx].endMonth) && (day <= termDate[yearIdx].term[termIdx].endDate)) {
+      isHoliday = false;
+    } 
 
     return isHoliday;
   },
@@ -518,7 +488,7 @@ Page({
     var month = parseInt(selectMonth);
     var day = parseInt(selectDay);
     var yearIdx = 0;
-    var term = 0;
+    var term = 0; //一年中term 4结束后的日子定义为term 0
 
     for (var i = 0; i < 3; i++) {//总共3年数据,找到对应年份的数据
       if (year == termDate[i].year){
@@ -527,20 +497,11 @@ Page({
       }
     } 
 
-    if ((month < termDate[yearIdx].term1.endMonth) || ((month == termDate[yearIdx].term1.endMonth) && (day <= termDate[yearIdx].term1.endDate))){
-      term = 1;
-    }
-    else if ((month < termDate[yearIdx].term2.endMonth) || ((month == termDate[yearIdx].term2.endMonth) && (day <= termDate[yearIdx].term2.endDate))) {
-      term = 2;
-    }
-    else if ((month < termDate[yearIdx].term3.endMonth) || ((month == termDate[yearIdx].term3.endMonth) && (day <= termDate[yearIdx].term3.endDate))) {
-      term = 3;
-    }
-    else if ((month < termDate[yearIdx].term4.endMonth) || ((month == termDate[yearIdx].term4.endMonth) && (day <= termDate[yearIdx].term4.endDate))) {
-      term = 4;
-    }
-    else {
-      term = 1; //选择为当年之term 4结束后的日期，即下一年的term 1
+    for (var i = 0; i < 4; i++) {//总共4个term，找到对应的就退出循环，此时i+1就是term
+      if ((month < termDate[yearIdx].term[i].endMonth) || ((month == termDate[yearIdx].term[i].endMonth) && (day <= termDate[yearIdx].term[i].endDate))){
+        term = i + 1;
+        break;
+      }
     }
 
     return term;
