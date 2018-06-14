@@ -152,6 +152,11 @@ Page({
   2. 调用函数通过选择日期验证是否满足入读条件，及如果满足，应该入读什么年级
   */
   bindCalcBtn:function(){
+    //测试代码，用后删除，恢复后面注释掉部分
+    wx.navigateTo({
+      url: '../result/result',
+    });
+    /*
     var that = this;
     if ((that.data.birthDate == '请选择生日日期') || (that.data.learnStartDate == '请点选您计划的日期') || (that.data.learnEndDate == '请点选您计划的日期')) {
       //有该填的未填
@@ -164,7 +169,7 @@ Page({
     }
     else{
       that.learnInfoValidate();
-    }
+    }*/
     
   },
 

@@ -3,15 +3,39 @@
   <view class="page__desc">一些描述</view>
 </view>
 
-<!--表格呈现-->
-  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
-    <view class="weui-cell__bd" style="background-color:lightblue">花费项</view>  
-    <view class="weui-cell__bd" style="background-color:lightblue">金额</view> 
-    <view class="weui-cell__bd" style="background-color:lightblue">备注</view>   
-  </view> 
+<!--表格呈现-->  
+<view class="weui-cells__title">微留学花费</view>
+<view class="weui-cells weui-cells_after-title" style='margin:auto 20rpx;'>  
+  <view class="weui-cell" >
+    <view class="weui-cell__bd">报名费</view>
+    <view class="weui-cell__ft">$300</view>
+  </view>
 
-  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
-    <view class="weui-cell__bd">第一项</view>  
-    <view class="weui-cell__bd">钱</view> 
-    <view class="weui-cell__bd">没有</view>   
-  </view>   
+  <view class="weui-cell" >
+    <view class="weui-cell__bd">学费</view>
+    <view class="weui-cell__ft">$2000</view>
+  </view>
+
+  <view class="weui-cell" >
+    <view class="weui-cell__bd">服务费</view>
+    <view class="weui-cell__ft">$1000</view>
+  </view>  
+</view> 
+
+<view class="weui-cells__title">其他花费</view>
+<view class="weui-cells weui-cells_after-title" style='margin:auto 20rpx;'>  
+    <view class="weui-cell" >
+      <view class="weui-cell__bd">签证</view>
+      <input class="weui-input weui-cell_input weui-cell__ft" placeholder='人民币 900' bindinput='testInput'/>
+    </view>
+
+    <view class="weui-cell" >
+      <view class="weui-cell__bd">国际机票</view>
+      <view class="weui-cell__ft">$2000</view>
+    </view>
+
+    <view class="weui-cell" >
+      <view class="weui-cell__bd">食宿</view>
+      <view class="weui-cell__ft">$1000</view>
+    </view>  
+</view> 
