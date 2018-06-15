@@ -7,17 +7,20 @@
 <view class="weui-cells__title">微留学花费</view>
 <view class="weui-cells weui-cells_after-title" style='margin:auto 20rpx;'>  
   <view class="weui-cell" >
-    <view class="weui-cell__bd">报名费</view>
+    <image mode='aspectFit' src='../../images/enrolment_icon.png' style = 'width: 23px; height:23px'></image>
+    <view class="weui-cell__bd" style='margin:auto 10px'>报名费</view>
     <view class="weui-cell__ft">$300</view>
   </view>
 
   <view class="weui-cell" >
-    <view class="weui-cell__bd">学费</view>
+    <image mode='aspectFit' src='../../images/study_icon.png' style = 'width: 23px; height:23px'></image>
+    <view class="weui-cell__bd" style='margin:auto 10px'>学费</view>
     <view class="weui-cell__ft">$2000</view>
   </view>
 
   <view class="weui-cell" >
-    <view class="weui-cell__bd">服务费</view>
+    <image mode='aspectFit' src='../../images/service_icon.png' style = 'width: 23px; height:23px'></image>
+    <view class="weui-cell__bd" style='margin:auto 10px'>服务费</view>
     <view class="weui-cell__ft">$1000</view>
   </view>  
 </view> 

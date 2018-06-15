@@ -13,7 +13,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.0.4",
 	"appid": "wx10c0b5e4267b5127",
-	"projectname": "Ausun%20Calculator",
+	"projectname": "StudyFeeCalc",
 	"isGameTourist": false,
 	"condition": {
 		"search": {

@@ -130,8 +130,9 @@
 
 <!--生日选择框-->
   <view class="weui-cells weui-cells_after-title" style='margin-top:40rpx;'>  
-    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">  
-      <view class="weui-cell__bd">孩子生日</view>
+    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active"> 
+      <image mode='aspectFit' src='../../images/birth_date_icon.png' style = 'width: 23px; height:23px'></image> 
+      <view class="weui-cell__bd" style='margin:auto 10px'>孩子生日</view>
         <picker mode="date" value="{{birthDate}}" start="2000-01-01" end="2020-12-31" bindchange="bindBirthDateChange">
             <view class="weui-cell__ft weui-cell__ft_in-access">
               {{birthDate}}
@@ -143,7 +144,8 @@
 <!--开始日期选择框-->
   <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
     <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" catchtap='showStartCal'>  
-      <view class="weui-cell__bd">计划入读日期</view>
+      <image mode='aspectFit' src='../../images/start_date_icon.png' style = 'width: 23px; height:23px'></image> 
+      <view class="weui-cell__bd" style='margin:auto 10px'>计划入读日期</view>
       <view class="weui-cell__ft weui-cell__ft_in-access">{{learnStartDate}}</view>    
     </view>  
   </view>
@@ -151,7 +153,8 @@
 <!--结束日期选择框-->
   <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
     <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" catchtap='showEndCal'>  
-      <view class="weui-cell__bd">结束学习日期</view>  
+      <image mode='aspectFit' src='../../images/end_date_icon.png' style = 'width: 23px; height:23px'></image> 
+      <view class="weui-cell__bd" style='margin:auto 10px'>结束学习日期</view>  
       <view class="weui-cell__ft weui-cell__ft_in-access">{{learnEndDate}}</view>  
     </view>  
   </view>   
