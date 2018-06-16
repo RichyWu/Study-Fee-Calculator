@@ -1,6 +1,12 @@
 <view class="page__hd">
-  <view class="page__title">结果页</view>
-  <view class="page__desc">一些描述</view>
+  <view class="page__title">花费计算</view>
+  <view class="page__desc">您孩子于
+    <text style="color:blue"> {{startDate}} </text>至
+    <text style="color:blue"> {{endDate}} </text>在
+    <text style="color:blue"> {{learnLevel}} </text>入读
+    <text style="color:red"> {{learningWeeks}} </text>周
+  </view>
+  <view class="page__desc" style="font-style: italic">* 微留学花费根据所选时间按维州教育局公布的价格表计算。</view>
 </view>
 
 <!--表格呈现-->  
@@ -9,27 +15,37 @@
   <view class="weui-cell" >
     <image mode='aspectFit' src='../../images/enrolment_icon.png' style = 'width: 23px; height:23px'></image>
     <view class="weui-cell__bd" style='margin:auto 10px'>报名费</view>
-    <view class="weui-cell__ft">$300</view>
+    <view class="weui-cell__ft">${{enrolFee}}</view>
   </view>
 
   <view class="weui-cell" >
     <image mode='aspectFit' src='../../images/study_icon.png' style = 'width: 23px; height:23px'></image>
     <view class="weui-cell__bd" style='margin:auto 10px'>学费</view>
-    <view class="weui-cell__ft">$2000</view>
+    <view class="weui-cell__ft">${{tuitionFee}}</view>
   </view>
 
   <view class="weui-cell" >
     <image mode='aspectFit' src='../../images/service_icon.png' style = 'width: 23px; height:23px'></image>
     <view class="weui-cell__bd" style='margin:auto 10px'>服务费</view>
-    <view class="weui-cell__ft">$1000</view>
+    <view class="weui-cell__ft">${{serviceFee}}</view>
   </view>  
-</view> 
 
+  <view class="weui-cell" >
+    <image mode='aspectFit' src='../../images/total_icon.png' style = 'width: 23px; height:23px'></image>
+    <view class="weui-cell__bd" style='margin:auto 10px'>总计</view>
+    <view class="weui-cell__ft">人民币￥</view>
+    <view class="weui-cell__ft" style="color:blue; font-weight:40px"> {{(enrolFee + tuitionFee + serviceFee) * rate}}</view>
+    <view class="weui-cell__ft" style="margin-left:10px">澳币$ </view>
+    <view class="weui-cell__ft" style="color:blue; font-weight:40px">{{enrolFee + tuitionFee + serviceFee}}</view>
+  </view>  
+  
+</view> 
+<!--
 <view class="weui-cells__title">其他花费</view>
 <view class="weui-cells weui-cells_after-title" style='margin:auto 20rpx;'>  
     <view class="weui-cell" >
       <view class="weui-cell__bd">签证</view>
-      <input class="weui-input weui-cell_input weui-cell__ft" placeholder='人民币 900' bindinput='testInput'/>
+      <input class="weui-cell_input weui-cell__ft" placeholder='人民币 900' bindinput='testInput'/>
     </view>
 
     <view class="weui-cell" >
@@ -41,4 +57,9 @@
       <view class="weui-cell__bd">食宿</view>
       <view class="weui-cell__ft">$1000</view>
     </view>  
-</view> 
+</view>
+-->
+
+<view class="page__ft">
+  <image mode="aspectFit" src="../../images/Ausun Global_字在右.png" style="width: 126px; height: 29px;margin-top: 80px"></image>
+</view>

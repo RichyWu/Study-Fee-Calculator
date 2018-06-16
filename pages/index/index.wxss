@@ -14,6 +14,7 @@
 .modalBox{  
   width: 100%;  
   font-size: 32rpx;  
+  overflow: scroll;
 }  
 .box{  
   margin: 0 auto;  
@@ -87,8 +88,8 @@
   height: 500rpx;
   padding: 10rpx 30rpx 30rpx 30rpx;    
   overflow: scroll;    
-  /*position: absolute; 
-  top: 20%;    
+  position: relative; 
+  /*top: 20%;    
   left: 0;    
   right: 0; */  
   margin: 0 auto;    
