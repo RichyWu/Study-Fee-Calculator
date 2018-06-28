@@ -5,7 +5,7 @@ const schoolFee = [278, 369, 414];//1st for PS; 2nd for junior; 3rd for senior
 
 Page({
   data: {
-    rate:0, //人民币兑澳元汇率
+    rate: 0, //澳元兑人民币汇率
     schoolLevelIdx: 0, // 0 - PS; 1 - junior; 2 senior
     learningWeeks: 0,
     learnLevel: '',
@@ -16,6 +16,8 @@ Page({
     enrolFee: 284,
     tuitionFee: 0,
     serviceFee: 1000,
+    totalFeeAud:0,
+    totalFeeCny:0,
   },
   onLoad: function () {
     this.getCurrencyRate();
@@ -24,6 +26,8 @@ Page({
     var schoolLevel = app.globalData.schoolLevelIdx;
     var tuitionPerWeek = schoolFee[schoolLevel];
     var tuition = learnWeeks * tuitionPerWeek;
+    var total = this.data.enrolFee + this.data.serviceFee + tuition;
+    var totalCny = (total * this.data.rate).toFixed(1);
 
     this.setData({
       schoolLevelIdx: schoolLevel,
@@ -34,6 +38,8 @@ Page({
       termStart: app.globalData.termStart,
       termEnd: app.globalData.termEnd,
       tuitionFee: tuition,
+      totalFeeAud: total,
+      totalFeeCny: totalCny,
     })
   },
 
@@ -44,33 +50,8 @@ Page({
   getCurrencyRate() {
     var self = this;
     self.setData({
-      rate: 5,
+      rate: app.globalData.curRate,
     });
-    /*var now = new Date();
-    var nowDate = util.formatDate(now, '-');
-
-    wx.request({
-      url: 'https://api.getweapp.com/thirdparty/95516/web.exchange.rate?date=' + nowDate + '&baseCurrency=CNY' + '&transactionCurrency=AUD',
-      header: {
-        "contentType": "application/json",
-        "dataType": "json"
-      },
-      success: function (res) {
-        var realRateValue = parseFloat(res.data.params.result);
-        if (realRateValue) {
-          self.setData({
-            rate: res.data.params.result
-          });
-          console.log('get rate successfully, it is 1:' + self.data.rate);
-        }
-        else {
-          console.log('request sent successfully but not get data')
-        }
-      },
-      fail: function (res) {
-        console.log('request failure')
-      }
-    });*/
   },
 
 })

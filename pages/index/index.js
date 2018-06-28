@@ -235,7 +235,7 @@ Page({
             })//前往结果页
           }
           if(res.cancel){
-            console.log('用户点击取消')//留在当前页
+            //console.log('用户点击取消')//留在当前页
           }
         }
       })
@@ -570,7 +570,7 @@ Page({
     end.setDate(endDay);
 
     var gapDays = Math.floor((end.getTime() - start.getTime()) / (1000*3600*24)) + 1;
-    console.log('起始相差' + gapDays + '天')
+    //console.log('起始相差' + gapDays + '天')
 
     var weeks = ((gapDays%7 == 0)?(gapDays/7):(Math.floor(gapDays/7)+1));
 

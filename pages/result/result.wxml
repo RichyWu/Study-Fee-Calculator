@@ -6,7 +6,7 @@
     <text style="color:blue"> {{learnLevel}} </text>入读
     <text style="color:red"> {{learningWeeks}} </text>周
   </view>
-  <view class="page__desc" style="font-style: italic">* 微留学花费根据所选时间按维州教育局公布的价格表计算。</view>
+  <view class="page__desc" style="font-style: italic">* 微留学花费依据维州教育局公布的价格表计算。</view>
 </view>
 
 <!--表格呈现-->  
@@ -34,10 +34,13 @@
     <image mode='aspectFit' src='../../images/total_icon.png' style = 'width: 23px; height:23px'></image>
     <view class="weui-cell__bd" style='margin:auto 10px'>总计</view>
     <view class="weui-cell__ft">人民币￥</view>
-    <view class="weui-cell__ft" style="color:blue; font-weight:40px"> {{(enrolFee + tuitionFee + serviceFee) * rate}}</view>
+    <view class="weui-cell__ft" style="color:blue; font-weight:40px"> {{totalFeeCny}}</view>
     <view class="weui-cell__ft" style="margin-left:10px">澳币$ </view>
-    <view class="weui-cell__ft" style="color:blue; font-weight:40px">{{enrolFee + tuitionFee + serviceFee}}</view>
-  </view>  
+    <view class="weui-cell__ft" style="color:blue; font-weight:40px"> {{totalFeeAud}}</view>
+  </view>
+
+  <view class="weui-cell__ft" style="font-size:10px; font-style:italic; color:gray; padding-right:15px">* 1澳币 = {{rate}} 人民币</view>
+  
   
 </view> 
 <!--
