@@ -48,6 +48,7 @@ Page({
     //判断读几年级
     age: 0,   //以计划入读那年4月30日为基准的年龄  
     termOfStartLearn: 0, //入读时候是term几
+    termOfEndLearn: 0, //结束时是term几
   },
 
   //页面载入时计算当日日期,
@@ -153,10 +154,10 @@ Page({
   */
   bindCalcBtn:function(){
     //测试代码，用后删除，恢复后面注释掉部分
-    wx.navigateTo({
+    /*wx.navigateTo({
       url: '../result/result',
-    });
-    /*
+    });*/
+    
     var that = this;
     if ((that.data.birthDate == '请选择生日日期') || (that.data.learnStartDate == '请点选您计划的日期') || (that.data.learnEndDate == '请点选您计划的日期')) {
       //有该填的未填
@@ -169,7 +170,7 @@ Page({
     }
     else{
       that.learnInfoValidate();
-    }*/
+    }
     
   },
 
@@ -212,9 +213,8 @@ Page({
         app.globalData.schoolLevelIdx = (age<=14?1: 2)
       }
       //计算入读周数
-      /*var learnWeeks = that.calcLearnWeeks();
+      var learnWeeks = that.calcLearnWeeks();
       app.globalData.learningWeeks = learnWeeks;
-      console.log(learnWeeks);*/
 
       var dispContent = '您的孩子将于' + that.data.learnStartDate + '就读' + learnLevel + ' 的第 ' + that.data.termOfStartLearn + ' 个Term';
       wx.showModal({
@@ -224,12 +224,18 @@ Page({
         confirmText:"继续",
         success: function (res) {
           if (res.confirm) {
+            //把公共数据存到globalData里
+            app.globalData.startDate = that.data.learnStartDate;
+            app.globalData.endDate = that.data.learnEndDate;
+            app.globalData.learnLevel = learnLevel;
+            app.globalData.termStart = that.data.termOfStartLearn;
+            app.globalData.termEnd = that.data.termOfEndLearn;
             wx.navigateTo({
               url: '../result/result',
             })//前往结果页
           }
           if(res.cancel){
-            console.log('用户点击取消')//留在当前页
+            //console.log('用户点击取消')//留在当前页
           }
         }
       })
@@ -448,6 +454,7 @@ Page({
             if (res.confirm) {
               sameTerm = true;//强制继续
               that.setData({
+                termOfEndLearn: selectTerm, //只有当结束和开始不在一个term时才更新termOfEndLearn
                 learnEndDate: util.formatDate(d, '-'),
                 hideEndCal: true,
               })
@@ -555,13 +562,14 @@ Page({
 
     start.setFullYear(startYear);
     start.setMonth(startMonth - 1);
-    start.setDate(endDay);
+    start.setDate(startDay);
 
     end.setFullYear(endYear);
-    end.setMonth(endMonth);
+    end.setMonth(endMonth - 1);
     end.setDate(endDay);
 
-    var gapDays = ((end.getTime() - start.getTime()) / (1000*3600*24)) + 1;
+    var gapDays = Math.floor((end.getTime() - start.getTime()) / (1000*3600*24)) + 1;
+    //console.log('起始相差' + gapDays + '天')
 
     var weeks = ((gapDays%7 == 0)?(gapDays/7):(Math.floor(gapDays/7)+1));
 
@@ -573,5 +581,16 @@ Page({
   */
   preventTouchMove: function () {
   },
+
+  //设置分享
+  onShareAppMessage() {
+    return {
+      title: '微留学花费计算器',
+      path: '/pages/index/index?id=richw64',
+      imageUrl: '/images/Calculator-icon.png',
+    }
+  },
+
+  
 
 })
