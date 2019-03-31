@@ -6,7 +6,8 @@
   <!--Title及描述 -->
   <view class="page__hd">
     <view class="page__title">墨尔本微留学花费计算</view>
-    <view class="page__desc">根据孩子的生日以及计划入读日期，提示孩子将入读的年级。同时根据计划学习的时长，提供微留学报名及入读的花费。选择日期时，日历会标注学期假期时间，方便您制定计划。</view>
+    <view class="page__desc">墨尔本微留学以入学当年的年龄划分年级。本计算器根据您的输入，提供微留学入读年级、报名及入读的花费计算。</view>
+    <view class="page__desc">选择日期时，日历上灰色部分为学期假期，请据此制定计划。</view>
   </view>
 
   <!--开始日期日历窗，平时隐藏，由“计划入读日期”的点击激活-->
@@ -129,9 +130,10 @@
   </view>
 
 <!--生日选择框-->
-  <view class="weui-cells weui-cells_after-title" style='margin-top:40rpx;'>  
-    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">  
-      <view class="weui-cell__bd">孩子生日</view>
+  <view class="weui-cells weui-cells_after-title" style='margin-top:20rpx;'>  
+    <view class="weui-cell weui-cell_access" hover-class="weui-cell_active"> 
+      <image mode='aspectFit' src='../../images/birth_date_icon.png' style = 'width: 23px; height:23px'></image> 
+      <view class="weui-cell__bd" style='margin:auto 10px'>孩子生日</view>
         <picker mode="date" value="{{birthDate}}" start="2000-01-01" end="2020-12-31" bindchange="bindBirthDateChange">
             <view class="weui-cell__ft weui-cell__ft_in-access">
               {{birthDate}}
@@ -141,17 +143,19 @@
   </view>  
 
 <!--开始日期选择框-->
-  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
+  <view class="weui-cells weui-cells_after-title" style='margin-top:40rpx;'>  
     <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" catchtap='showStartCal'>  
-      <view class="weui-cell__bd">计划入读日期</view>
+      <image mode='aspectFit' src='../../images/start_date_icon.png' style = 'width: 23px; height:23px'></image> 
+      <view class="weui-cell__bd" style='margin:auto 10px'>计划入读日期</view>
       <view class="weui-cell__ft weui-cell__ft_in-access">{{learnStartDate}}</view>    
     </view>  
   </view>
 
 <!--结束日期选择框-->
-  <view class="weui-cells weui-cells_after-title" style='margin-top:80rpx;'>  
+  <view class="weui-cells weui-cells_after-title" style='margin-top:40rpx;'>  
     <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" catchtap='showEndCal'>  
-      <view class="weui-cell__bd">结束学习日期</view>  
+      <image mode='aspectFit' src='../../images/end_date_icon.png' style = 'width: 23px; height:23px'></image> 
+      <view class="weui-cell__bd" style='margin:auto 10px'>结束学习日期</view>  
       <view class="weui-cell__ft weui-cell__ft_in-access">{{learnEndDate}}</view>  
     </view>  
   </view>   
@@ -165,5 +169,5 @@
 </view>
 
 <view class="page__ft">
-  <image mode="aspectFit" src="../../images/Ausun Global_字在右.png" style="width: 84px; height: 19px;"></image>
+  <image mode="aspectFit" src="../../images/Ausun Global_字在右.png" style="width: 126px; height: 29px;"></image>
 </view>
