@@ -5,7 +5,7 @@ App({
   },
   globalData: {
     schoolLevelIdx: 0,
-    schoolFee: [278, 369, 414],
+    schoolFee: [288, 382, 428], //from DET - [Primary, Junior High, Senior High]
     learningWeeks: 0,
     startDate: '',
     endDate:'',
