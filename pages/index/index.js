@@ -1,7 +1,7 @@
 //index.js
 const app = getApp()
 var util = require("../../utils/util.js")
-const startYear = 2018
+const startYear = 2019
 const psYrLevel = ['学前班', '1年级', '2年级', '3年级', '4年级', '5年级', '6年级']
 const collegeYrLevel = ['7年级', '8年级', '9年级', '10年级', '11年级', '12年级']
 const termDate = [{ year: 2019, term: [{ startMonth: 1, startDate: 30, endMonth: 4, endDate: 5 }, { startMonth: 4, startDate: 23, endMonth: 6, endDate: 28 }, { startMonth: 7, startDate: 15, endMonth: 9, endDate: 20 }, { startMonth: 10, startDate: 7, endMonth: 12, endDate: 20 }] },
@@ -65,7 +65,7 @@ Page({
     var termNum = that.checkTermNum(year, month, day);
     var nextTerm = termNum + 1; //下一个term
 
-    if (termNum == 0) {
+    if (termNum == 0) { //所选时间为当年term 4已结束，下年term 1 未开始
       year++;
       nextTerm = 2;
       termNum++;
@@ -212,9 +212,11 @@ Page({
         learnLevel = collegeYrLevel[age-12]
         app.globalData.schoolLevelIdx = (age<=14?1: 2)
       }
-      //计算入读周数
-      var learnWeeks = that.calcLearnWeeks();
+      //计算入读周数, 时间不满一周按一周计算
+      var gapDays = that.calcLearnDays();
+      var learnWeeks = ((gapDays % 7 == 0) ? (gapDays / 7) : (Math.floor(gapDays / 7) + 1));
       app.globalData.learningWeeks = learnWeeks;
+      app.globalData.learningDays = gapDays;
 
       var dispContent = '您的孩子将于' + that.data.learnStartDate + '就读' + learnLevel + ' 的第 ' + that.data.termOfStartLearn + ' 个Term';
       wx.showModal({
@@ -270,25 +272,21 @@ Page({
     //计算需显示日历的月份中，1号的index
     var d = new Date();
     d.setFullYear(year);
-    d.setMonth(month - 1);
-    d.setDate(1);
+    d.setMonth((month - 1), 1);
     var firstDayIdxThisMth = d.getDay(); //本月1号在 0（周日） - 6（周六）的index
 
     d.setFullYear(yearNextMth);
-    d.setMonth(monthNextMth - 1);
-    d.setDate(1);
+    d.setMonth((monthNextMth - 1), 1);
     var firstDayIdxNextMth = d.getDay();//下一个月1号的index
 
     d.setFullYear(yearNextTwoMth);
-    d.setMonth(monthNextTwoMth - 1);
-    d.setDate(1);
+    d.setMonth((monthNextTwoMth - 1), 1);
     var firstDayIdxNexTwotMth = d.getDay();//再下一个月1号的index
 
     var arrThisMth = [];
     var arrNextOneMth = [];
     var arrNextTwoMth = [];
     var Index = 0;
-    //var dayElement = {day:0, bgColor:'white',color:'black'};
 
     //本月总共多少天，从1号开始放入数组
     //同时判断当日是否为学期假期，若是，则在数组中加入对应的background color（gray)
@@ -353,8 +351,8 @@ Page({
     if ((parseInt(that.data.yearThisMth) > (d.getFullYear())) || (selectTerm > that.data.termNow)) {
       if(that.data.dayListThisMth[idx].bgColor != 'gray') {
         d.setFullYear(that.data.yearThisMth);
-        d.setMonth(that.data.thisMonth - 1);
-        d.setDate(val);
+        d.setMonth((that.data.thisMonth - 1), val);
+        //d.setDate(val);
 
         that.setData({
           learnStartDate: util.formatDate(d, '-'),
@@ -438,8 +436,8 @@ Page({
 
     var d = new Date();
     d.setFullYear(year);
-    d.setMonth(month-1);
-    d.setDate(val);
+    d.setMonth((month-1), val);
+    //d.setDate(val);
 
     //所选时间不是假期
     if (dayList[idx].bgColor != 'gray') {
@@ -541,9 +539,8 @@ Page({
   },
 
   /*根据page data的learnStartDate和learnEndDate，计算相差的天数
-    根据天数得到周数，不满一周视为一周。
   */
-  calcLearnWeeks(){
+  calcLearnDays(){
     var that = this;
 
     var startDate = that.data.learnStartDate;
@@ -561,19 +558,17 @@ Page({
     var end = new Date();
 
     start.setFullYear(startYear);
-    start.setMonth(startMonth - 1);
-    start.setDate(startDay);
+    start.setMonth((startMonth - 1), startDay);
+    //start.setDate(startDay);
 
     end.setFullYear(endYear);
-    end.setMonth(endMonth - 1);
-    end.setDate(endDay);
+    end.setMonth((endMonth - 1), endDay);
+    //end.setDate(endDay);
 
     var gapDays = Math.floor((end.getTime() - start.getTime()) / (1000*3600*24)) + 1;
     //console.log('起始相差' + gapDays + '天')
 
-    var weeks = ((gapDays%7 == 0)?(gapDays/7):(Math.floor(gapDays/7)+1));
-
-    return weeks;
+    return gapDays;
   },
 
   /**  

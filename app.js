@@ -8,13 +8,13 @@ App({
     now = util.formatDate(now, '-');
 
     if (this.globalData.readCurrency) {
-      this.globalData.curRate = this.getCurRate();
+      //this.globalData.curRate = this.getCurRate();
       //console.log('readCurrency为true，汇率接口调用')
       this.globalData.today = now;
       this.globalData.readCurrency = false;
     }
     else if(this.globalData.today != now){
-      this.globalData.curRate = this.getCurRate();
+      //this.globalData.curRate = this.getCurRate();
       //console.log('不是同一天，汇率接口调用')
       this.globalData.today = now;
     }
@@ -47,29 +47,27 @@ App({
         var status = parseInt(res.data.status);
         if (status == 0) {//返回成功
           self.globalData.curRate = res.data.result.rate;
-          //console.log('get rate successfully, it is 1:' + self.globalData.curRate);
+          console.log('get rate successfully, it is 1:' + self.globalData.curRate);
         }
         else {
-          //console.log('request sent successfully but not get data')
+          console.log('request sent successfully but not get data')
         }
       },
       fail: function (res) {
-        //console.log('request failure')
+        console.log('request failure')
       }
     });
   },
 
   globalData: {
-<<<<<<< HEAD
     schoolLevelIdx: 0,
     schoolFee: [288, 382, 428], //from DET - [Primary, Junior High, Senior High]
-=======
     curRate:0,
     readCurrency:true,
     today:'2018-08-08',
     schoolLevelIdx: 0, // 0 - PS; 1 - junior; 2 senior
->>>>>>> d91270fa942cace9496512ffe58b09a699b17f3c
     learningWeeks: 0,
+    learningDays: 0,
     learnLevel:'',
     startDate: '',
     endDate:'',
