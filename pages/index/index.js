@@ -4,9 +4,9 @@ var util = require("../../utils/util.js")
 const startYear = 2018
 const psYrLevel = ['学前班', '1年级', '2年级', '3年级', '4年级', '5年级', '6年级']
 const collegeYrLevel = ['7年级', '8年级', '9年级', '10年级', '11年级', '12年级']
-const termDate = [{ year: 2018, term:[{ startMonth: 1, startDate: 29, endMonth: 3, endDate: 29 }, { startMonth: 4, startDate: 16, endMonth: 6, endDate: 29 }, { startMonth: 7, startDate: 16, endMonth: 9, endDate: 21 }, { startMonth: 10, startDate: 8, endMonth: 12, endDate: 21 }] },
-{ year: 2019, term: [{ startMonth: 1, startDate: 29, endMonth: 4, endDate: 5 }, { startMonth: 4, startDate: 23, endMonth: 6, endDate: 28 }, { startMonth: 7, startDate: 15, endMonth: 9, endDate: 20 }, { startMonth: 10, startDate: 7, endMonth: 12, endDate: 20 }] },
-{ year: 2020, term: [{ startMonth: 1, startDate: 28, endMonth: 3, endDate: 27 }, { startMonth: 4, startDate: 14, endMonth: 6, endDate: 26 }, { startMonth: 7, startDate: 13, endMonth: 9, endDate: 18 }, { startMonth: 10, startDate: 5, endMonth: 12, endDate: 18 }] }
+const termDate = [{ year: 2019, term: [{ startMonth: 1, startDate: 30, endMonth: 4, endDate: 5 }, { startMonth: 4, startDate: 23, endMonth: 6, endDate: 28 }, { startMonth: 7, startDate: 15, endMonth: 9, endDate: 20 }, { startMonth: 10, startDate: 7, endMonth: 12, endDate: 20 }] },
+{ year: 2020, term: [{ startMonth: 1, startDate: 29, endMonth: 3, endDate: 27 }, { startMonth: 4, startDate: 14, endMonth: 6, endDate: 26 }, { startMonth: 7, startDate: 13, endMonth: 9, endDate: 18 }, { startMonth: 10, startDate: 5, endMonth: 12, endDate: 18 }] },
+  { year: 2021, term: [{ startMonth: 1, startDate: 28, endMonth: 4, endDate: 1 }, { startMonth: 4, startDate: 19, endMonth: 6, endDate: 25 }, { startMonth: 7, startDate: 12, endMonth: 9, endDate: 17 }, { startMonth: 10, startDate: 4, endMonth: 12, endDate: 17 }] }
 ]
 
 Page({
@@ -327,8 +327,7 @@ Page({
     var that = this;
     var d = new Date();
     d.setFullYear(year);
-    d.setMonth(month);
-    d.setDate(0);
+    d.setMonth(month, 0); //month没有减1，取的是下个月。但是后面的0（day）取的是上个月最后一天。所以最后取得本月最后一天，即本月总天数
     return (d.getDate()); //d.getDate() 即为此月的总天数！  
   },
 
