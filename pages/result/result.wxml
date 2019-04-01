@@ -6,7 +6,7 @@
     <text style="color:blue"> {{learnLevel}} </text>入读
     <text style="color:red"> {{learningWeeks}} </text>周
   </view>
-  <view class="page__desc" style="font-style: italic">* 微留学花费依据维州教育局公布的价格表计算。</view>
+  <view class="page__desc" style="font-style: italic">* 微留学花费依据维州教育局公布的价格表计算。此处学费不够8周按8周计</view>
 </view>
 
 <!--表格呈现-->  
