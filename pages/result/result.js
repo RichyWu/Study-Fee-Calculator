@@ -8,7 +8,7 @@ const curRate = 5; //澳元兑人民币汇率
 const visa = 160; //旅游签证申请费
 const flight = 2000;
 const accoFee = 110; //一间双（三）人民宿一晚费用
-const living = 100; //个人一周生活费
+const living = 15; //个人一天生活费
 const misc = 300; //入读杂费，包括校服，文具等
 
 Page({
@@ -61,7 +61,7 @@ Page({
     var learnWeeks = app.globalData.learningWeeks;
     var schoolLevel = app.globalData.schoolLevelIdx;
     var tuitionPerWeek = schoolFee[schoolLevel];
-    var tuition = learnWeeks * tuitionPerWeek;
+    var tuition = tuitionPerWeek * ((learnWeeks<8)?8:learnWeeks);//学费不够8周，按8周算
     var total = appFee + servFee + tuition + misc;
     var totalCny = total * curRate;
 
@@ -90,13 +90,12 @@ Page({
     var self = this;
     var num = self.data.peopleArray[self.data.peopleArrIndex]; //人数
     var days = app.globalData.learningDays;
-    var weeks = app.globalData.learningWeeks;
 
     var visaRate = visa * num;
     var flightFee = flight * num;
     var accommNum = (num <= 3)?1:2; //超过3人要2间房
     var accomm = accoFee * days * accommNum;
-    var livingRate = living * num * weeks;
+    var livingRate = living * num * days;
     var totalAud = visaRate + flightFee + accomm + livingRate;
     var totalCny = totalAud * curRate;
 
