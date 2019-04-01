@@ -6,8 +6,8 @@
   <!--Title及描述 -->
   <view class="page__hd">
     <view class="page__title">墨尔本微留学花费计算</view>
-    <view class="page__desc">墨尔本微留学以入学当年的年龄划分年级。本计算器根据您输入的日期，提供微留学入读年级、报名及入读的花费计算。</view>
-    <view class="page__desc">学期假期在日历上以灰色标注，助您了解学校开课日期。</view>
+    <view class="page__desc">墨尔本微留学以入学当年的年龄划分年级。本计算器根据您的输入，提供微留学入读年级、报名及入读的花费计算。学期假期在日历上以灰色标注，助您了解学校开课日期。当您选择入读日期后，日历上会用浅蓝色标注8周学习时间</view>
+    <view class="page__desc" style="font-style: italic"> * 墨尔本教育局推荐入读8周以上，但规定不超过12周。</view>
   </view>
 
   <!--开始日期日历窗，平时隐藏，由“计划入读日期”的点击激活-->
@@ -32,7 +32,7 @@
               <view class="week" style="border-bottom:0;color:transparent">0</view>  
             </block>  
             <block wx:for="{{dayListThisMth}}" wx:key="item">  
-              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseStartDate" data-index="{{index}}" data-value="{{item.day}}">{{item.day}}</view>  
+              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseStartDate" data-index="{{index}}" data-value="{{item.day}}">{{item.day}}</view> 
             </block>  
           </view>  
         </view>  
@@ -122,6 +122,30 @@
             </block>  
             <block wx:for="{{dayListNextTwoMth}}" wx:key="item">  
               <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseEndDateNextTwoMth" data-value="{{item.day}}">{{item.day}}</view>  
+            </block>  
+          </view>  
+        </view>  
+      </view>
+    </view> 
+
+    <!--第四个日历-->
+    <view class="modal-dialog" hidden="{{hideEndCal}}">  
+      <view class='modalBox'>  
+        <view class='box'>  
+          <view class='calendarBox'>  
+            <view class='calendarTitle'>  
+              <text style='font-size:46rpx;'>{{yearNextThreeMth}}</text> 年  
+              <text style='font-size:46rpx;'>{{nextThreeMonth}}</text> 月  
+            </view>  
+
+            <block wx:for="{{week}}" wx:key="item">  
+              <view class="week">{{week[index]}}</view>  
+            </block>  
+            <block wx:for="{{firstDayIdxNextThreeMth}}" wx:key="item">  
+              <view class="week" style="border-bottom:0;color:transparent">0</view>  
+            </block>  
+            <block wx:for="{{dayListNextThreeMth}}" wx:key="item">  
+              <view class='week' style="border-bottom:0;background-color:{{item.bgColor}};color:{{item.color}}" catchtap="chooseEndDateNextThreeMth" data-value="{{item.day}}">{{item.day}}</view>  
             </block>  
           </view>  
         </view>  
