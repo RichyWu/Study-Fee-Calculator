@@ -19,9 +19,11 @@ Page({
     dayListThisMth: [],
     dayListNextOneMth: [],
     dayListNextTwoMth: [],
+    dayListNextThreeMth:[],
     firstDayIdxThisMth: 0,
     firstDayIdxNextOneMth: 0,
     firstDayIdxNextTwoMth: 0,
+    firstDayIdxNextThreeMth: 0,
     thisMonth: 0,
     yearThisMth: 0,
     initDate: '',
@@ -37,10 +39,14 @@ Page({
     highLightDate: 0,
     nextOneMonth: 0,
     nextTwoMonth: 0,
+    nextThreeMonth: 0,
     yearNextOneMth: 0,
     yearNextTwoMth: 0,
+    yearNextThreeMth: 0,
     dateValue: [9999, 13, 32],
     hideEndCal: true,
+    minLearnEndDate: 0,
+    maxLearnEndDate: 0,
 
     //结束日期比开始日期早的warning
     warning:false,
@@ -136,9 +142,19 @@ Page({
 
   showEndCal() {
     var that = this;
-    that.setData({
-      hideEndCal: false
-    })
+    if (that.data.learnStartDate == '请点选您计划的日期') {
+      //先要填入读时间
+      wx.showModal({
+        title: '注意！',
+        content: '请确保赴澳学习日期已经填写',
+        showCancel: false,
+        confirmText: "知道了",
+      })
+    }else{
+      that.setData({
+        hideEndCal: false
+      })
+    }
   },
 
   confirmWarning(){
@@ -213,7 +229,7 @@ Page({
         app.globalData.schoolLevelIdx = (age<=14?1: 2)
       }
       //计算入读周数, 时间不满一周按一周计算
-      var gapDays = that.calcLearnDays();
+      var gapDays = that.calcLearnDays(that.data.learnStartDate, that.data.learnEndDate);
       var learnWeeks = ((gapDays % 7 == 0) ? (gapDays / 7) : (Math.floor(gapDays / 7) + 1));
       app.globalData.learningWeeks = learnWeeks;
       app.globalData.learningDays = gapDays;
@@ -247,8 +263,7 @@ Page({
   /*使用方法：传入年月日。绘制当年当月的日历，并高亮传入日期。
     day有缺省值，如果调用时没有传入day，则无需高亮日期。比如入读日历的picker改变时间后，重新渲染日历
     需要高亮的场景：
-    1. 初始化，高亮当天日期
-    2. 入读时间选择后，点开结束时间日历，高亮入读日期
+    1. 入读时间选择后，点开结束时间日历，高亮入读日期,并默认为接下来8周添上颜色（不覆盖假期灰色）
   */
   renderCalendar(year, month, day=0) {
     var that = this;
@@ -269,6 +284,14 @@ Page({
       yearNextTwoMth++;
     }
 
+    //计算下仨月，判断是否翻年
+    var yearNextThreeMth = yearNextTwoMth;
+    var monthNextThreeMth = monthNextTwoMth + 1;
+    if (monthNextThreeMth > 12) {
+      monthNextThreeMth = 1;
+      yearNextThreeMth++;
+    }
+
     //计算需显示日历的月份中，1号的index
     var d = new Date();
     d.setFullYear(year);
@@ -281,11 +304,16 @@ Page({
 
     d.setFullYear(yearNextTwoMth);
     d.setMonth((monthNextTwoMth - 1), 1);
-    var firstDayIdxNexTwotMth = d.getDay();//再下一个月1号的index
+    var firstDayIdxNexTwotMth = d.getDay();//下两个月1号的index
+
+    d.setFullYear(yearNextThreeMth);
+    d.setMonth((monthNextThreeMth - 1), 1);
+    var firstDayIdxNextThreeMth = d.getDay();//下三个月1号的index
 
     var arrThisMth = [];
     var arrNextOneMth = [];
     var arrNextTwoMth = [];
+    var arrNextThreeMth = [];
     var Index = 0;
 
     //本月总共多少天，从1号开始放入数组
@@ -302,13 +330,98 @@ Page({
       let backgroundColor = ((that.isHoliday(yearNextTwoMth, monthNextTwoMth, i)) ? 'gray' : 'white');
       arrNextTwoMth.push({ day: i, bgColor: backgroundColor, color: 'black' });
     }
+    for (var i = 1; i <= that.getDayNum(yearNextThreeMth, monthNextThreeMth); i++) {
+      let backgroundColor = ((that.isHoliday(yearNextThreeMth, monthNextThreeMth, i)) ? 'gray' : 'white');
+      arrNextThreeMth.push({ day: i, bgColor: backgroundColor, color: 'black' });
+    }
    
-    //判断是否传入了day，需要高亮
+    /*
+    判断是否传入了day，需要高亮
+    高亮start date后，以此为参数，添加8周的默认时间（默认到周五）
+    */
     if (day != 0) {
       Index = day-1;
       arrThisMth[Index].bgColor = 'blue';
       arrThisMth[Index].color = 'white';
-    } 
+
+      //从start date到min end date，除了假期（灰色），都标成浅蓝
+      var curMth = that.data.thisMonth;
+      var minEndMth = that.data.minLearnEndDate.getMonth() + 1;
+      var minEndDay = that.data.minLearnEndDate.getDate();
+
+      if(curMth == minEndMth){ //只在本月日历上，到end date
+        for(var i = day; i < (minEndDay); i++){
+          if(arrThisMth[i].bgColor != 'gray'){
+            arrThisMth[i].bgColor = 'lightblue';
+            arrThisMth[i].color = 'gray';
+          }
+        }
+      }
+      else{//把本月填满,再看下个月
+        for (var i = day; i < (arrThisMth.length); i++) {
+          if (arrThisMth[i].bgColor != 'gray') {
+            arrThisMth[i].bgColor = 'lightblue';
+            arrThisMth[i].color = 'gray';
+          }
+        }
+        curMth++; //到next one month了
+        curMth = (curMth > 12)?1:curMth;
+        if (curMth == minEndMth) {
+          for (var i = 0; i < (minEndDay); i++) {
+            if (arrNextOneMth[i].bgColor != 'gray') {
+              arrNextOneMth[i].bgColor = 'lightblue';
+              arrNextOneMth[i].color = 'gray';
+            }
+          }
+        }
+        else{//把next one month填满，再看next Two Mth
+          for (var i = 0; i < (arrNextOneMth.length); i++) {
+            if (arrNextOneMth[i].bgColor != 'gray') {
+              arrNextOneMth[i].bgColor = 'lightblue';
+              arrNextOneMth[i].color = 'gray';
+            }
+          }
+          curMth++; //到next two month了
+          curMth = (curMth > 12) ? 1 : curMth;
+          if (curMth == minEndMth) {
+            for (var i = 0; i < (minEndDay); i++) {
+              if (arrNextTwoMth[i].bgColor != 'gray') {
+                arrNextTwoMth[i].bgColor = 'lightblue';
+                arrNextTwoMth[i].color = 'gray';
+              }
+            }
+          }
+          else{
+            for (var i = 0; i < (arrNextTwoMth.length); i++) {
+              if (arrNextTwoMth[i].bgColor != 'gray') {
+                arrNextTwoMth[i].bgColor = 'lightblue';
+                arrNextTwoMth[i].color = 'gray';
+              }
+            }
+          }
+        }
+      }
+
+      //从max end date开始，到日历结束都标成红色
+      var endMonth = that.data.maxLearnEndDate.getMonth() + 1;
+      var maxEndDate = that.data.maxLearnEndDate.getDate();
+      curMth = that.data.thisMonth;
+      var gap = endMonth - curMth;
+      if (gap <=3){ //如果大于3，则没有日历显示max end date
+        if(gap == 3){
+          var arr = arrNextThreeMth;
+        }
+        if(gap == 2){
+          var arr = arrNextTwoMth;
+        }
+        for(var i = (maxEndDate - 1); i < arr.length; i++){
+          if (arr[i].bgColor != 'gray') {
+            arr[i].bgColor = 'red';
+            arr[i].color = 'white';
+          }
+        }
+      }
+    } //end of if (day != 0)
     
     that.setData({
       firstDayIdxThisMth: firstDayIdxThisMth,
@@ -317,12 +430,15 @@ Page({
       dayListThisMth: arrThisMth,
       dayListNextOneMth: arrNextOneMth,
       dayListNextTwoMth: arrNextTwoMth,
+      dayListNextThreeMth: arrNextThreeMth,
       thisMonth: month,
       yearThisMth: year,
       nextOneMonth: monthNextMth,
       yearNextOneMth: yearNextMth,
       nextTwoMonth: monthNextTwoMth,
       yearNextTwoMth: yearNextTwoMth,
+      nextThreeMonth: monthNextThreeMth,
+      yearNextThreeMth:yearNextThreeMth,
     })
   },
 
@@ -339,27 +455,94 @@ Page({
     当在日历上选择时，dayListThisMth已经更新了，点选的日期可以在list里找到（index = date - 1)
     找到对应的日期后，bgColor不为gray的才可以操作 - 即非假期
     并且选择的term必须大于当前时间所处term（onLoad时计算） - 因为申请必须至少提前一个term
-    点选完毕后，除了设置learnStartDate，还需要隐藏日历
+    点选完毕后:
+    1. 设置learnStartDate
+    2. 根据learnStartDate，计算minLearnEndDate (8周)
+    3. 根据learnStartDate, 计算maxLearnEndDate （12周）
+    4.隐藏日历
   */
   chooseStartDate(e) {
     var that = this;
     var val = e.currentTarget.dataset.value;
     var idx = parseInt(val) - 1;
     var selectTerm = that.checkTermNum(that.data.yearThisMth, that.data.thisMonth, val);
-    var d = new Date();
+    var startDate = new Date();
 
-    if ((parseInt(that.data.yearThisMth) > (d.getFullYear())) || (selectTerm > that.data.termNow)) {
+    if ((parseInt(that.data.yearThisMth) > (startDate.getFullYear())) || (selectTerm > that.data.termNow)) {
       if(that.data.dayListThisMth[idx].bgColor != 'gray') {
-        d.setFullYear(that.data.yearThisMth);
-        d.setMonth((that.data.thisMonth - 1), val);
-        //d.setDate(val);
+        //set the learnStartDate
+        startDate.setFullYear(that.data.yearThisMth);
+        startDate.setMonth((that.data.thisMonth - 1), val);
+
+        //construct term end date upon selected term. it's the first day after the term end date
+        var year = that.data.yearThisMth;
+        var tempTerm = selectTerm;
+        var termEndDate = new Date(year, (termDate[year - startYear].term[tempTerm - 1].endMonth - 1), (termDate[year - startYear].term[tempTerm - 1].endDate + 1));    
+
+        //calc the minimum end date (8 weeks)
+        var minEndDate = new Date(startDate.getTime());
+        minEndDate.setDate(startDate.getDate() + 7*8 - 1); //8 weeks later
+        
+        //if minEndDate is greater than term end date, it needs cross the term break
+        if(minEndDate > termEndDate){
+          //1. the weeks from start date to term end date
+          var gapDays = that.calcLearnDays(util.formatDate(startDate, '-'), util.formatDate(termEndDate,'-'));
+          var gapWeeks = ((gapDays % 7 == 0) ? (gapDays / 7) : (Math.floor(gapDays / 7) + 1));
+
+          //2. start from next term's start date, for (8-gapWeeks) weeks
+          if (selectTerm == 4) {
+            year++;
+            tempTerm = 1;
+          }
+          else{
+            tempTerm++;
+          }
+          termEndDate.setFullYear(year,(termDate[year-startYear].term[tempTerm-1].startMonth - 1), (termDate[year - startYear].term[tempTerm - 1].startDate));
+          minEndDate.setDate(termEndDate.getDate() + 7*(8-gapWeeks) - 1);            
+        }
+
+        //calc the maximum end date (12 weeks), it's possible to cross 2 term breaks
+        // start from min end date, add 4 more weeks
+        var maxEndDate = new Date(minEndDate.getTime());
+        year = maxEndDate.getFullYear();
+        tempTerm = that.checkTermNum(year, (maxEndDate.getMonth()+1),maxEndDate.getDate()); //update the term number
+        termEndDate.setFullYear(year, (termDate[year - startYear].term[tempTerm - 1].endMonth - 1), (termDate[year - startYear].term[tempTerm - 1].endDate + 1));
+
+        maxEndDate.setDate(minEndDate.getDate() + 7 * 4); //4 weeks later
+                
+        //if maxEndDate is greater than term end date, it needs cross the term break
+        if (maxEndDate > termEndDate) {
+          //1. the weeks from start date (minEndDate) to updated term end date
+          var gapDays = that.calcLearnDays(util.formatDate(minEndDate, '-'), util.formatDate(termEndDate, '-'));
+          var gapWeeks = ((gapDays % 7 == 0) ? (gapDays / 7) : (Math.floor(gapDays / 7) + 1));
+
+          //2. start from next term's start date, for (8-gapWeeks) weeks
+          if (tempTerm == 4) {
+            year++;
+            tempTerm = 1;
+          }
+          else {
+            tempTerm++;
+          }
+          termEndDate.setFullYear(year, (termDate[year - startYear].term[tempTerm - 1].startMonth - 1), (termDate[year - startYear].term[tempTerm - 1].startDate));
+          maxEndDate.setDate(termEndDate.getDate() + 7 * (4 - gapWeeks));
+        }
+
+        var visaMaxDate = new Date(startDate.getTime());
+        visaMaxDate.setMonth(startDate.getMonth()+3);
+
+        maxEndDate = (maxEndDate < visaMaxDate)?maxEndDate:visaMaxDate; //12周学习和3个月visa，看谁先到期
 
         that.setData({
-          learnStartDate: util.formatDate(d, '-'),
+          learnStartDate: util.formatDate(startDate, '-'),
           hideStartCal:true,
           termOfStartLearn: selectTerm,
           dayOfStartThisMth: val,
+          minLearnEndDate: minEndDate,
+          maxLearnEndDate: maxEndDate,
         })
+        
+        
         //更新入读日期后，同时render日历，并高亮日期
         that.renderCalendar(that.data.yearThisMth, that.data.thisMonth, parseInt(val));
       }
@@ -408,6 +591,12 @@ Page({
     that.chooseEndDate(val, '3rd'); //选的第三个日历上的日期
   },
 
+  chooseEndDateNextThreeMth(e) {
+    var that = this;
+    var val = e.currentTarget.dataset.value;
+    that.chooseEndDate(val, '4th'); //选的第三个日历上的日期
+  },
+
   chooseEndDate(selectDate, whichCalendar) {
     var that = this;
     var val = selectDate;
@@ -429,6 +618,11 @@ Page({
       month = that.data.nextTwoMonth;
       dayList = that.data.dayListNextTwoMth;
     }
+    else if (whichCalendar == '4th') {
+      year = that.data.yearNextThreeMth;
+      month = that.data.nextThreeMonth;
+      dayList = that.data.dayListNextThreeMth;
+    }
 
     var idx = parseInt(val) - 1;
     var selectTerm = that.checkTermNum(year, month, val);
@@ -437,10 +631,21 @@ Page({
     var d = new Date();
     d.setFullYear(year);
     d.setMonth((month-1), val);
-    //d.setDate(val);
 
-    //所选时间不是假期
-    if (dayList[idx].bgColor != 'gray') {
+    var gapDays = that.calcLearnDays(that.data.learnStartDate, util.formatDate(d,'-'));
+    var learnWeeks = ((gapDays % 7 == 0) ? (gapDays / 7) : (Math.floor(gapDays / 7) + 1));
+
+    //所选时间不是假期也不是max end date之后的
+    if ((dayList[idx].bgColor != 'gray') && (dayList[idx].bgColor != 'red')) {
+      //如果少于8周，给提示
+      if(learnWeeks < 8){
+        wx.showModal({
+          title: '注意',
+          content: '就读少于8周，学费仍可能按8周收取',
+          showCancel: false,
+          confirmText: "知道了"
+        })
+      }
       //若跨term了
       if (!sameTerm) {
         wx.showModal({
@@ -538,13 +743,11 @@ Page({
     return term;
   },
 
-  /*根据page data的learnStartDate和learnEndDate，计算相差的天数
+  /*根据传入的参数startDate和endDate，计算相差的天数
+    参数为date字符串format
   */
-  calcLearnDays(){
+  calcLearnDays(startDate, endDate){
     var that = this;
-
-    var startDate = that.data.learnStartDate;
-    var endDate = that.data.learnEndDate;
 
     var startYear = startDate.substring(0,4);
     var startMonth = startDate.substring(5,7);
